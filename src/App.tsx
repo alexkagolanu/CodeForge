@@ -13,6 +13,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 
 // Page imports
 import Home from "./pages/Home";
+import AuthCallback from "./pages/AuthCallback";
 import Problems from "./pages/Problems";
 import ProblemEditor from "./pages/ProblemEditor";
 import CreateProblem from "./pages/CreateProblem";
@@ -45,6 +46,12 @@ const RootDecider = () => {
   return user ? <Navigate to="/home" replace /> : <Navigate to="/auth" replace />;
 };
 
+const RequireAuth = ({ children }: { children: JSX.Element }) => {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  return user ? children : <Navigate to="/auth" replace />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
@@ -56,24 +63,26 @@ const App = () => (
             <Routes>
               {/* Root redirect based on auth */}
               <Route path="/" element={<RootDecider />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/problems" element={<Problems />} />
-              <Route path="/problem/:slug" element={<ProblemEditor />} />
-              
-              <Route path="/create" element={<CreateProblem />} />
-              <Route path="/create/algo" element={<CreateAlgoProblem />} />
-              <Route path="/create/sql" element={<CreateSqlProblem />} />
-              <Route path="/lists" element={<Lists />} />
-              <Route path="/lists/create" element={<CreateList />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/profile/settings" element={<ProfileSettings />} />
-              <Route path="/settings" element={<Settings />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/bookmarks" element={<Bookmarks />} />
-              
-              {/* Share Routes */}
-              <Route path="/share/:code" element={<ProblemEditor />} />
-              <Route path="/list/:code" element={<ListDetail />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
+
+              <Route path="/home" element={<RequireAuth><Home /></RequireAuth>} />
+              <Route path="/problems" element={<RequireAuth><Problems /></RequireAuth>} />
+              <Route path="/problem/:slug" element={<RequireAuth><ProblemEditor /></RequireAuth>} />
+
+              <Route path="/create" element={<RequireAuth><CreateProblem /></RequireAuth>} />
+              <Route path="/create/algo" element={<RequireAuth><CreateAlgoProblem /></RequireAuth>} />
+              <Route path="/create/sql" element={<RequireAuth><CreateSqlProblem /></RequireAuth>} />
+              <Route path="/lists" element={<RequireAuth><Lists /></RequireAuth>} />
+              <Route path="/lists/create" element={<RequireAuth><CreateList /></RequireAuth>} />
+              <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+              <Route path="/profile/settings" element={<RequireAuth><ProfileSettings /></RequireAuth>} />
+              <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
+              <Route path="/bookmarks" element={<RequireAuth><Bookmarks /></RequireAuth>} />
+
+              {/* Share Routes (protect if necessary) */}
+              <Route path="/share/:code" element={<RequireAuth><ProblemEditor /></RequireAuth>} />
+              <Route path="/list/:code" element={<RequireAuth><ListDetail /></RequireAuth>} />
               
               {/* Catch-all */}
               <Route path="*" element={<RootDecider />} />
