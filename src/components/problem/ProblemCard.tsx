@@ -53,10 +53,11 @@ export function ProblemCard({ problem, isCompleted }: ProblemCardProps) {
                 </Badge>
               )}
 
-                <Badge variant="outline" className="text-xs capitalize">
-                  {(problem as any).problemType}
-                </Badge>
-              )}
+                {(problem as any).problemType && (
+                  <Badge variant="outline" className="text-xs capitalize">
+                    {(problem as any).problemType}
+                  </Badge>
+                )}
               <Badge variant={difficultyVariant[safeDifficulty]}>
                 {safeDifficulty.charAt(0).toUpperCase() + safeDifficulty.slice(1)}
               </Badge>
