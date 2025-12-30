@@ -7,9 +7,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 
 // Page imports
 import Home from "./pages/Home";
@@ -39,6 +39,12 @@ const queryClient = new QueryClient({
   },
 });
 
+const RootDecider = () => {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  return user ? <Navigate to="/home" replace /> : <Navigate to="/auth" replace />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
@@ -48,8 +54,9 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              {/* Main Routes */}
-              <Route path="/" element={<Home />} />
+              {/* Root redirect based on auth */}
+              <Route path="/" element={<RootDecider />} />
+              <Route path="/home" element={<Home />} />
               <Route path="/problems" element={<Problems />} />
               <Route path="/problem/:slug" element={<ProblemEditor />} />
               
@@ -69,7 +76,7 @@ const App = () => (
               <Route path="/list/:code" element={<ListDetail />} />
               
               {/* Catch-all */}
-              <Route path="*" element={<NotFound />} />
+              <Route path="*" element={<RootDecider />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

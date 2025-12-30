@@ -27,6 +27,7 @@ export default function ProblemsPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [selectedProblemTypes, setSelectedProblemTypes] = useState<string[]>([]);
 
   useEffect(() => {
     async function loadProblems() {
@@ -96,9 +97,10 @@ export default function ProblemsPage() {
     setSelectedDifficulty(null);
     setSelectedTags([]);
     setSelectedPlatforms([]);
+    setSelectedProblemTypes([]);
   };
 
-  const hasActiveFilters = searchQuery || selectedDifficulty || selectedTags.length > 0 || selectedPlatforms.length > 0;
+  const hasActiveFilters = searchQuery || selectedDifficulty || selectedTags.length > 0 || selectedPlatforms.length > 0 || selectedProblemTypes.length > 0;
 
   return (
     <Layout>
